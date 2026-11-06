@@ -29,6 +29,40 @@ The notebook loads the CSVs into pandas and an in-memory SQLite database, so eve
 ### Part 2 – SQL and Python
 <!-- For each question: what you were asked, how you approached it, the result. -->
 ### Part 3 – Data quality and spreadsheets
+### Part 3 – Data Quality and Spreadsheets
+
+#### D1. Audit the Data
+
+The following data quality issues concern me:
+
+1. **Duplicate orders:** Order ID 1006 appears twice. I would investigate and remove the duplicate if confirmed.
+2. **Missing values:** Order 1009 has a NULL amount. I would check the original transaction records.
+3. **Unusual amount:** Order 1013 has KES 185,000, which may be an incorrect entry. I would verify it.
+4. **Inconsistent city names:** Nairobi appears with different capitalisation and extra spaces. I would standardise the city names.
+5. **Invalid customer reference:** Order 1020 belongs to customer ID 999, who is not in the customers table. I would investigate the missing customer record.
+6. **Order statuses:** Cancelled and refunded orders should not be included in completed revenue calculations.
+
+I would clean and validate the data before sharing final reports.
+
+#### D2. Spreadsheet Formulas
+
+**1. Total completed M-Pesa revenue:**
+
+```excel
+=SUMIFS(E:E,D:D,"completed",F:F,"M-Pesa")
+```
+
+**2. Add each order's city from the customers sheet:**
+
+```excel
+=XLOOKUP(B2,customers!A:A,customers!B:B,"Not Found")
+```
+
+The first formula adds amounts for completed orders paid through M-Pesa. The second looks up the customer's ID and returns their city from the customers sheet.
+
+#### D3. Mean or Median
+
+I would use the median because the dataset contains an unusually high completed order of KES 185,000. This outlier can increase the mean and make it less representative of a typical order. The median is less affected by extreme values and gives a better picture of the typical completed order value.
 ### Part 4 – Statistics
 ### Part 5 – Business case
 ### Part 6 – Questions for the team
@@ -43,44 +77,65 @@ The following results were calculated from the supplied Tunda Box sample data.
 
 | Order Status | Number of Orders |
 |---|---:|
-| Completed | 17 |
+| Completed | 16 |
 | Cancelled | 2 |
 | Refunded | 2 |
 
-Note: The counts include the duplicated order ID 1006 in the original data.
-
+**Note:** I used distinct order IDs to avoid counting the duplicated order ID 1006 twice. The original data contains 17 completed rows, including the duplicate.
 ### 2. Completed Revenue by City (S2)
 
 | City | Revenue (KES) |
 |---|---:|
 | Kisumu | 187,100 |
-| Nairobi | 22,150 |
+| Nairobi | 20,650 |
+| Mombasa | 5,150 |
 | Nakuru | 3,300 |
-| Mombasa | 2,800 |
-| Eldoret | 2,350 |
 
 Kisumu has the highest completed-order revenue.
 
+I removed duplicate orders, excluded missing amounts and standardised city names. Orders belonging to unmatched customer IDs were not included in the city totals.
 ### 3. Repeat Purchase Rate (S4)
 
-**Result: 30%**
+### S4. Repeat Purchase Rate
 
-- Total customers: 10
-- Customers with at least two distinct completed orders: 3
+**SQL Query:**
 
-Calculation:
+```sql
+WITH unique_orders AS (
+    SELECT DISTINCT ON (order_id) *
+    FROM orders
+    ORDER BY order_id
+),
+customer_orders AS (
+    SELECT
+        c.customer_id,
+        COUNT(o.order_id) AS order_count
+    FROM customers c
+    LEFT JOIN unique_orders o
+        ON c.customer_id = o.customer_id
+        AND o.status = 'completed'
+    GROUP BY c.customer_id
+)
+SELECT
+    COUNT(*) FILTER (WHERE order_count >= 2) * 100.0
+    / COUNT(*) AS repeat_purchase_rate
+FROM customer_orders;
 
-(3 / 10) × 100 = 30%
+**Result:** 30%.
 
-I counted distinct completed order IDs and excluded cancelled and refunded orders. The duplicated order ID 1006 was counted only once.
+**Calculation:** 3 customers out of 10 have placed at least two distinct completed orders.
+
+Repeat purchase rate = (3 / 10) × 100 = 30%.
+
+I counted completed orders only and used distinct order IDs to avoid counting duplicates.
 
 ### 4. Month-on-Month Revenue (S5)
 
 | Month | Completed Revenue (KES) | Percentage Change |
 |---|---:|---:|
 | June | 9,000 | N/A |
-| July | 8,300 | -7.78% |
-| August | 192,000 | 2,213.25% |
+| July | 6,800 | -24.44% |
+| August | 192,000 | 2,723.53% |
 | September | 10,300 | -94.64% |
 
 The unusually high August revenue is caused by an order worth KES 185,000, which requires verification.
