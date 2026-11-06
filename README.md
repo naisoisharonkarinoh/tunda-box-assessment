@@ -218,4 +218,13 @@ I counted completed orders only and used distinct order IDs to avoid counting du
 |---|---:|---:|
 | June | 9,000 | N/A |
 | July | 6,800 | -24.44% |
-| August | 192,000 | 2,723t/d/16JPZYd3hE99O3n7k2NwQlNIRME8a5mNaLY9cp85G7cs/edit?usp=sharing)
+| August | 192,000 | 2,723.53% |
+| September | 10,300 | -94.64% |
+
+**Interpretation:**
+
+Revenue decreased by 24.44% in July, increased significantly by 2,723.53% in August, and decreased by 94.64% in September.
+
+The unusually high August revenue was mainly caused by an order worth KES 185,000 (Order ID 1013). This amount should be verified before using it for business decisions.
+
+The monthly calculations exclude duplicate orders, cancelled and refunded orders, and orders with missing amounts.
