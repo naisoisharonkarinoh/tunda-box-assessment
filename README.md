@@ -1,8 +1,11 @@
-# Tunda Box – Junior Data Analyst Assessment
+## Completed Assessment Document
+
+The full Junior Data Analyst Assessment, including my responses to Parts 1–6, is available in Google Docs.
+
+[View My Completed Tunda Box Assessment](https://docs.google.com/document/d/16JPZYd3hE99O3n7k2NwQlNIRME8a5mNaLY9cp85G7cs/edit?usp=sharing)
 
 **Candidate:** Sharon Koina · [LinkedIn](https://linkedin.com/in/sharon-koina) · [GitHub](https://github.com/naisoisharonkarinoh)
 
-Completed assessment document (Google Doc copy with all responses): **<paste your Drive link here>**
 
 ## Repository contents
 | File | What it is |
